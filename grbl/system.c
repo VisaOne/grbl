@@ -69,8 +69,14 @@ ISR(CONTROL_INT_vect)
       mc_reset();
     }
     if (bit_istrue(pin,CONTROL_PIN_INDEX_CYCLE_START)) {
-      bit_true(sys_rt_exec_state, EXEC_CYCLE_START);
+      if (sys.state == STATE_HOLD || sys.state == STATE_IDLE || sys.state == STATE_SLEEP) {
+        bit_true(sys_rt_exec_state, EXEC_CYCLE_START);
+      }
+      else {
+        bit_true(sys_rt_exec_state, EXEC_FEED_HOLD);
+      }
     }
+  
     #ifndef ENABLE_SAFETY_DOOR_INPUT_PIN
       if (bit_istrue(pin,CONTROL_PIN_INDEX_FEED_HOLD)) {
         bit_true(sys_rt_exec_state, EXEC_FEED_HOLD);
